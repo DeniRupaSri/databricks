@@ -1,0 +1,38 @@
+name: CI
+ 
+on:
+
+  # push:
+
+    # branches: [ "main" ]
+
+  workflow_dispatch:
+ 
+jobs:
+
+  build:
+
+    runs-on: ubuntu-latest
+ 
+    steps:
+
+    - uses: actions/checkout@v4
+ 
+    - name: Setup Databricks CLI (official)
+
+      uses: databricks/setup-cli@main
+ 
+    - name: Deploy repo to Azure Databricks Workspace
+
+      run: |
+
+        export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net/"
+
+        export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
+
+        databricks workspace import-dir . \
+
+        /Workspace/Users/deni.lakamsani@snp.com/Notebookfolder \
+
+        --overwrite
+ 
