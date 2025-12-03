@@ -46,7 +46,7 @@ jobs:
           databricks auth env-var
           
           # Pull latest GitHub changes into your Databricks Repo
-          databricks repos update /Workspace/Users/deni.lakamsani@snp.com/Notebookfolder --branch main
+          databricks repos update /Workspace/Users/deni.lakamsani@snp.com/Notebookfolder
 
       # Your existing example steps (kept as-is)
       - name: Run a one-line script
