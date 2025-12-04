@@ -1,61 +1,24 @@
 name: CI
-
+ 
 on:
   push:
     branches: [ "main" ]
   workflow_dispatch:
-
+ 
 jobs:
   build:
     runs-on: ubuntu-latest
-
+ 
     steps:
-      # 1. Checkout repo
-      - uses: actions/checkout@v4
-
-      # 2. Convert JSON notebooks -> .ipynb
-      - name: Convert JSON notebooks to ipynb
-        run: |
-          mkdir -p notebooks_ipynb
-          python - << 'EOF'
-          import json, os, glob, pathlib
-
-          src_dir = "notebooks"
-          dst_dir = "notebooks_ipynb"
-          os.makedirs(dst_dir, exist_ok=True)
-
-          # Handle files like notebooks/data_cleaning (no extension)
-          for path in glob.glob(os.path.join(src_dir, "*")):
-              if not os.path.isfile(path):
-                  continue
-              try:
-                  with open(path, "r", encoding="utf-8") as f:
-                      nb = json.load(f)
-              except Exception as e:
-                  print(f"Skipping {path}: not valid JSON notebook ({e})")
-                  continue
-
-              base = pathlib.Path(path).name  # e.g. "data_cleaning"
-              out_path = os.path.join(dst_dir, base + ".ipynb")
-              with open(out_path, "w", encoding="utf-8") as f:
-                  json.dump(nb, f, indent=1)
-              print(f"Converted {path} -> {out_path}")
-          EOF
-
-      # 3. Setup Databricks CLI
-      - name: Setup Databricks CLI (official)
-        uses: databricks/setup-cli@main
-
-      # 4. Import the .ipynb notebooks into workspace as real notebooks
-      - name: Deploy ipynb notebooks to Azure Databricks Workspace
-        env:
-          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
-        run: |
-          # export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
-          # export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
-          databricks workspace import-dir \
-            notebooks_ipynb \
-            /Workspace/Users/deni.lakamsani@snp.com/Notebookfolder/notebooks \
-            --format JUPYTER \
-            --overwrite
+    - uses: actions/checkout@v4
+ 
+    - name: Setup Databricks CLI (official)
+      uses: databricks/setup-cli@main
+ 
+    - name: Deploy repo to Azure Databricks Workspace
+      run: |
+        export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
+        export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
+        databricks workspace import-dir . \
+        /Workspace/Users/deni.lakamsani@snp.com/Notebookfolder \
+        --overwrite
