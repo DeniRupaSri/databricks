@@ -48,12 +48,12 @@ jobs:
 
       # 4. Import the .ipynb notebooks into workspace as real notebooks
       - name: Deploy ipynb notebooks to Azure Databricks Workspace
-        # env:
-        #   DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
-        #   DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
-          export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
+          # export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
+          # export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
           databricks workspace import-dir \
             notebooks_ipynb \
             /Workspace/Users/deni.lakamsani@snp.com/Notebookfolder/notebooks \
