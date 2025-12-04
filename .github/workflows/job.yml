@@ -30,7 +30,6 @@ jobs:
               }
             ]
           }')
-
           JOB_ID=$(echo "$JOB_JSON" | jq -r '.job_id')
 
           # Run the job
