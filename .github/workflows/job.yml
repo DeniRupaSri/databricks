@@ -34,4 +34,4 @@ jobs:
           JOB_ID=$(echo "$JOB_JSON" | jq -r '.job_id')
 
           # Run the job
-          databricks jobs run-now --job-id "$JOB_ID"
+          databricks jobs run-now "$JOB_ID"
