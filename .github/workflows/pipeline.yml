@@ -1,0 +1,26 @@
+{
+  "name": "job-src",
+  "tasks": [
+    {
+      "task_key": "Training",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/src_notebook/src_folder/Training",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 600
+    },
+    {
+      "task_key": "Evaluation",
+      "depends_on": [
+        { "task_key": "Training" }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/src_notebook/src_folder/Evaluation",
+        "source": "WORKSPACE"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 600
+    }
+  ]
+}
