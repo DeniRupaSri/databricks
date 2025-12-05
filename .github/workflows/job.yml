@@ -5,7 +5,7 @@ on:
     branches: ["main"]
  
 jobs:
-  create-and-run:
+  run-notebook:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -18,19 +18,6 @@ jobs:
           export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
           export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
           # Create a job that runs the imported notebook
-          JOB_JSON=$(databricks jobs create --json '{
-            "name": "pipeline-validation-notebook-job",
-            "tasks": [
-              {
-                "task_key": "run_notebook",
-                "notebook_task": {
-                  "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/src_notebook/src_folder/Job_Creation"
-                },
-                "existing_cluster_id": "1124-095229-bom9cuxu"
-              }
-            ]
-          }')
-          JOB_ID=$(echo "$JOB_JSON" | jq -r '.job_id')
-
+          JOB_ID=$(databricks jobs create --json @creation_job.json | jq -r '.job_id')
           # Run the job
           databricks jobs run-now "$JOB_ID"
