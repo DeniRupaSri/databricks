@@ -7,7 +7,7 @@
         "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/src_notebook/src_folder/Training",
         "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "existing_cluster_id": "1124-095229-bom9cuxu"
     },
     {
       "task_key": "Evaluation",
@@ -18,7 +18,7 @@
         "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/src_notebook/src_folder/Evaluation",
         "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu",
-    },
+      "existing_cluster_id": "1124-095229-bom9cuxu"
+    }
   ]
 }
