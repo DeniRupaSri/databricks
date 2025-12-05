@@ -18,6 +18,6 @@ jobs:
           export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
           export DATABRICKS_TOKEN="dapi43bfe94722db1bd799eabea16d019378-3"
           # Create a job that runs the imported notebook
-          JOB_ID=$(databricks jobs create --json @creation_job.json | jq -r '.job_id')
+          JOB_ID=$(databricks jobs create --json @src_folder/creation_job.json | jq -r '.job_id')
           # Run the job
           databricks jobs run-now "$JOB_ID"
