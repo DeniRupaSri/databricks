@@ -1,0 +1,69 @@
+{
+  "name": "classification-pipeline",
+  "tasks": [
+    {
+      "task_key": "dataclassify",
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/datapreparation"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu"
+    },
+    {
+      "task_key": "train",
+      "depends_on": [
+        { "task_key": "dataclassify" }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Training"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu"
+    },
+    {
+      "task_key": "eval",
+      "depends_on": [
+        { "task_key": "train" }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Evaluation"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu"
+    },
+    {
+      "task_key": "condition",
+      "depends_on": [
+        { "task_key": "eval" }
+      ],
+      "condition_task": {
+        "left": "{{tasks.eval.values.accuracy}}",
+        "op": "GREATER_THAN_EQUAL",
+        "right": "0.8"
+      }
+    },
+    {
+      "task_key": "modelregister",
+      "depends_on": [
+        {
+          "task_key": "condition",
+          "outcome": "true"
+        }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Modelregistration"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu"
+    },
+    {
+      "task_key": "notify",
+      "depends_on": [
+        {
+          "task_key": "condition",
+          "outcome": "false"
+        }
+      ],
+      "notebook_task": {
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Notify"
+      },
+      "existing_cluster_id": "1124-095229-bom9cuxu"
+    }
+  ]
+}
