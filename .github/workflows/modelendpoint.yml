@@ -13,6 +13,9 @@ on:
 jobs:
   deploy-endpoint:
     runs-on: ubuntu-latest
+    env:
+      DATABRICKS_HOST: "https://adb-1670050298591902.2.azuredatabricks.net"
+      DATABRICKS_TOKEN: "dapi4b40ad1ece89a527393ae3e677e48b76-3"
  
     steps:
       - uses: actions/checkout@v4
@@ -23,8 +26,6 @@ jobs:
       - name: Create and Run Job
         id: runjob
         run: |
-          export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
-          export DATABRICKS_TOKEN="dapi4b40ad1ece89a527393ae3e677e48b76-3"
  
           # Create job using deploy JSON and capture ID
           JOB_ID=$(databricks jobs create --json @Endpoint.json | jq -r '.job_id')
@@ -39,11 +40,8 @@ jobs:
  
       - name: Show Endpoint URL in GitHub Logs
         run: |
-          export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
-          export DATABRICKS_TOKEN="dapi4b40ad1ece89a527393ae3e677e48b76-3"
           # Get task run ID for Deploy_Endpoint task
           TASK_RUN_ID=$(databricks jobs get-run ${{ steps.runjob.outputs.RUN_ID }} | jq -r '.tasks[] | select(.task_key=="Endpoint") | .run_id')
           # Fetch only the task output
           OUTPUT=$(databricks jobs get-run-output $TASK_RUN_ID | jq -r '.notebook_output.result')
           echo "::notice title=🔗 Serving Endpoint::$OUTPUT"
- 
