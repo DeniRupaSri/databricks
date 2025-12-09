@@ -1,43 +1,78 @@
 {
-  "name": "classification-pipeline",
+  "name": "New Job Dec 08, 2025, 06:11 AM",
+  "email_notifications": {
+    "no_alert_for_skipped_runs": false
+  },
+  "webhook_notifications": {},
+  "notification_settings": {
+    "no_alert_for_skipped_runs": false,
+    "no_alert_for_canceled_runs": false
+  },
+  "timeout_seconds": 0,
+  "max_concurrent_runs": 1,
   "tasks": [
     {
       "task_key": "dataclassify",
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/datapreparation"
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/datapreparation",
+        "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu"
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "webhook_notifications": {}
     },
     {
       "task_key": "train",
       "depends_on": [
-        { "task_key": "dataclassify" }
+        {
+          "task_key": "dataclassify"
+        }
       ],
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Training"
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Training",
+        "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu"
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "webhook_notifications": {}
     },
     {
       "task_key": "eval",
       "depends_on": [
-        { "task_key": "train" }
+        {
+          "task_key": "train"
+        }
       ],
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Evaluation"
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Evaluation",
+        "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu"
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "webhook_notifications": {}
     },
     {
       "task_key": "condition",
       "depends_on": [
-        { "task_key": "eval" }
+        {
+          "task_key": "eval"
+        }
       ],
+      "run_if": "ALL_SUCCESS",
       "condition_task": {
+        "op": "GREATER_THAN_OR_EQUAL",
         "left": "{{tasks.eval.values.accuracy}}",
-        "op": "GREATER_THAN_EQUAL",
-        "right": "0.8"
-      }
+        "right": "0.9"
+      },
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "webhook_notifications": {}
     },
     {
       "task_key": "modelregister",
@@ -47,10 +82,15 @@
           "outcome": "true"
         }
       ],
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Modelregistration"
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Modelregistration",
+        "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu"
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 0,
+      "email_notifications": {},
+      "webhook_notifications": {}
     },
     {
       "task_key": "notify",
@@ -60,10 +100,28 @@
           "outcome": "false"
         }
       ],
+      "run_if": "ALL_SUCCESS",
       "notebook_task": {
-        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/Notify"
+        "notebook_path": "/Workspace/Users/deni.lakamsani@snp.com/Classification/notify",
+        "source": "WORKSPACE"
       },
-      "existing_cluster_id": "1124-095229-bom9cuxu"
+      "existing_cluster_id": "1124-095229-bom9cuxu",
+      "timeout_seconds": 0,
+      "email_notifications": {
+        "on_success": [
+          "denilakamsani@gmail.com"
+        ]
+      },
+      "notification_settings": {
+        "no_alert_for_skipped_runs": false,
+        "no_alert_for_canceled_runs": false,
+        "alert_on_last_attempt": false
+      },
+      "webhook_notifications": {}
     }
-  ]
+  ],
+  "queue": {
+    "enabled": true
+  },
+  "performance_target": "PERFORMANCE_OPTIMIZED"
 }
