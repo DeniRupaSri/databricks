@@ -23,7 +23,7 @@ jobs:
       - name: Create and Run Job
         run: |
           export DATABRICKS_HOST="https://adb-1670050298591902.2.azuredatabricks.net"
-          export DATABRICKS_TOKEN="dapica208467099d1366845363dafb32d8aa-3"
+          export DATABRICKS_TOKEN="dapi4b40ad1ece89a527393ae3e677e48b76-3"
  
           # Create job using deploy JSON and capture ID
           JOB_ID=$(databricks jobs create --json @Endpoint.json | jq -r '.job_id')
