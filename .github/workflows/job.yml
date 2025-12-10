@@ -1,8 +1,8 @@
 name: Create jb
  
 on:
-  push:
-    branches: ["main"]
+  #push:
+    #branches: ["main"]
  
 jobs:
   run-notebook:
