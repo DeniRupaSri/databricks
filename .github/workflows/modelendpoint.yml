@@ -1,47 +1,119 @@
 name: Deploy Model Endpoint
  
 on:
+
   workflow_dispatch:
+
     inputs:
+
       model_name:
+
         description: "Enter registered model name"
+
         required: true
+
       model_version:
+
         description: "Enter model version to deploy"
+
         required: true
+
+permissions:
+
+  id-token: write
+
+  contents: read
+ 
  
 jobs:
+
   deploy-endpoint:
+
     runs-on: ubuntu-latest
-    env:
-      DATABRICKS_HOST: "https://adb-1670050298591902.2.azuredatabricks.net"
-      DATABRICKS_TOKEN: "dapi4b40ad1ece89a527393ae3e677e48b76-3"
  
     steps:
+
       - uses: actions/checkout@v4
  
+      - name: Azure Login
+
+        uses: azure/login@v1
+
+        with:
+
+          client-id: ${{ secrets.AZURE_CLIENT_ID }}
+
+          tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          
+          client-secret: ${{ secrets.AZURE_CLIENT_SECRET }}
+ 
+ 
+      - name: Get secrets from Key Vault
+
+        id: azurekeyvault
+
+        uses: azure/CLI@v1
+
+        with:
+
+          inlineScript: |
+
+            echo "Fetching Databricks secrets from Key Vault..."
+
+            DATABRICKS_TOKEN=$(az keyvault secret show --vault-name "at-keyv" --name "databricks-token" --query value -o tsv)
+
+            echo "DATABRICKS_TOKEN=$databricks-token" >> $GITHUB_ENV
+
+            DATABRICKS_HOST=$(az keyvault secret show --vault-name "at-keyv" --name "databricks-host" --query value -o tsv)
+
+            echo "DATABRICKS_HOST=$databricks-host" >> $GITHUB_ENV
+ 
+ 
       - name: Setup Databricks CLI
+
         uses: databricks/setup-cli@main
+
+        env:
+
+          DATABRICKS_HOST: ${{ env.DATABRICKS_HOST }}
+
+          DATABRICKS_TOKEN: ${{ env.DATABRICKS_TOKEN }}
+ 
  
       - name: Create and Run Job
+
         id: runjob
+
         run: |
  
           # Create job using deploy JSON and capture ID
-          JOB_ID=$(databricks jobs create --json @Endpoint.json | jq -r '.job_id')
+
+          JOB_ID=$(databricks jobs create --json @modelendpoint.json | jq -r '.job_id')
  
           # Run job and pass parameters for deployment
+
           RUN_ID=$(databricks jobs run-now \
+
             --json "{\"job_id\": $JOB_ID, \"notebook_params\": {\"model_name\": \"${{ github.event.inputs.model_name }}\", \"model_version\": \"${{ github.event.inputs.model_version }}\"}}" \
+
             | jq -r '.run_id')
  
           echo "RUN_ID=$RUN_ID" >> $GITHUB_OUTPUT
  
  
       - name: Show Endpoint URL in GitHub Logs
+
         run: |
+
           # Get task run ID for Deploy_Endpoint task
+
           TASK_RUN_ID=$(databricks jobs get-run ${{ steps.runjob.outputs.RUN_ID }} | jq -r '.tasks[] | select(.task_key=="Endpoint") | .run_id')
+
           # Fetch only the task output
+
           OUTPUT=$(databricks jobs get-run-output $TASK_RUN_ID | jq -r '.notebook_output.result')
+
           echo "::notice title=🔗 Serving Endpoint::$OUTPUT"
+ 
