@@ -97,4 +97,4 @@ jobs:
           OUTPUT=$(databricks jobs get-run-output $TASK_RUN_ID | jq -r '.notebook_output.result')
 
           echo "::notice title=🔗 Serving Endpoint::$OUTPUT"
- 
+
