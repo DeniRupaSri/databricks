@@ -1,23 +1,26 @@
 name: Trigger Predictive Pricing Pipeline
-
+ 
 on:
   workflow_dispatch:
-
+ 
 jobs:
-  trigger-job:
+  run-notebook:
     runs-on: ubuntu-latest
-
+ 
     steps:
-      - name: Trigger Databricks Workflow
+      - uses: actions/checkout@v4
+ 
+      - name: Setup Databricks CLI
+        uses: databricks/setup-cli@main
+ 
+      - name: Create and Run Job
+        env:
+          DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+          DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
         run: |
-          response=$(curl -L -s -w "\nHTTP_CODE:%{http_code}" \
-          --request POST \
-          "${{ secrets.DATABRICKS_HOST }}/api/2.1/jobs/run-now" \
-          --header "Authorization: Bearer ${{ secrets.DATABRICKS_TOKEN }}" \
-          --header "Content-Type: application/json" \
-          --data '{
-            "job_id": 861040529881773
-          }')
-
-          echo "Databricks Response:"
-          echo "$response"
+          # Create a job from the JSON definition in the repo
+          JOB_ID=$(databricks jobs create --json @dbtimken.json | jq -r '.job_id')
+          echo "Created job: $JOB_ID"
+ 
+          # Run the job
+          databricks jobs run-now "$JOB_ID"
