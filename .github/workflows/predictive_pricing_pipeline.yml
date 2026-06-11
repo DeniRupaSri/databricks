@@ -1,0 +1,27 @@
+name: Trigger Predictive Pricing Pipeline
+
+on:
+workflow_dispatch:
+
+jobs:
+trigger-databricks-job:
+runs-on: ubuntu-latest
+
+```
+steps:
+  - name: Checkout Repository
+    uses: actions/checkout@v4
+
+  - name: Setup Databricks CLI
+    uses: databricks/setup-cli@main
+
+  - name: Trigger Databricks Workflow
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN }}
+
+    run: |
+      echo "Starting Predictive Pricing Pipeline..."
+
+      databricks jobs run-now 861040529881773
+```
