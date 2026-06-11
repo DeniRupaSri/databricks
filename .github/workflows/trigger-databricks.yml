@@ -10,7 +10,7 @@ jobs:
     steps:
       - name: Trigger Databricks Workflow
         run: |
-          response=$(curl -s -w "\nHTTP_CODE:%{http_code}" \
+          response=$(curl -L -s -w "\nHTTP_CODE:%{http_code}" \
           --request POST \
           "${{ secrets.DATABRICKS_HOST }}/api/2.1/jobs/run-now" \
           --header "Authorization: Bearer ${{ secrets.DATABRICKS_TOKEN }}" \
