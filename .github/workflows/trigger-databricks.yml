@@ -1,0 +1,22 @@
+name: Trigger Predictive Pricing Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  trigger-job:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Trigger Databricks Workflow
+        run: |
+          response=$(curl --silent --request POST \
+          "${{ secrets.DATABRICKS_HOST }}/api/2.1/jobs/run-now" \
+          --header "Authorization: Bearer ${{ secrets.DATABRICKS_TOKEN }}" \
+          --header "Content-Type: application/json" \
+          --data '{
+            "job_id": 861040529881773
+          }')
+
+          echo "Databricks Response:"
+          echo "$response"
