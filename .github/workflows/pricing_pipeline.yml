@@ -22,5 +22,5 @@ jobs:
         run: |
           echo "Starting Predictive Pricing Pipeline..."
     
-          databricks jobs run-now --job-id 861040529881773
+          databricks jobs run-now 861040529881773
 
